@@ -39,7 +39,7 @@ export const Route = createFileRoute("/products/$id")({
 });
 
 function ProductDetail() {
-  const { product } = Route.useLoaderData();
+  const { product } = Route.useLoaderData() as { product: typeof products[number] };
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
   const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3);
