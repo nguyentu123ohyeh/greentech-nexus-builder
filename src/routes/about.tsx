@@ -115,33 +115,7 @@ function About() {
           </Reveal>
         </div>
       </section>
-
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal className="max-w-2xl mb-12"><div className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Leadership Team</div><h2 className="text-4xl font-bold">A team built for international trade</h2></Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              ["David Chen", "Chief Executive", "photo-1560250097-0b93528c311a"],
-              ["Sarah Lindberg", "Head of Global Trade", "photo-1573496359142-b8d87734a5a2"],
-              ["Hiroshi Tanaka", "Director of Engineering", "photo-1507003211169-0a1dd7228f2d"],
-              ["Amelia Okafor", "VP Logistics", "photo-1580489944761-15a19d654956"],
-            ].map(([n, r, p], i) => (
-              <Reveal key={i} delay={i * 0.08}>
-                <div className="rounded-3xl overflow-hidden glass">
-                  <div className="aspect-[3/4] overflow-hidden">
-                    <img src={`https://images.unsplash.com/${p}?auto=format&fit=crop&w=600&q=80`} alt={n as string} className="w-full h-full object-cover hover:scale-110 transition duration-700" />
-                  </div>
-                  <div className="p-5">
-                    <div className="font-semibold">{n}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{r}</div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <Reveal>

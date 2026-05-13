@@ -54,9 +54,7 @@ export default function Footer() {
 
         <div className="lg:col-span-3 space-y-4">
           <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Reach Us</div>
-          <div className="flex gap-3 text-sm"><Mail className="w-4 h-4 text-primary mt-0.5" /> contact@greentech-impex.com</div>
-          <div className="flex gap-3 text-sm"><Phone className="w-4 h-4 text-primary mt-0.5" /> +1 (415) 555-0288</div>
-          <div className="flex gap-3 text-sm"><MapPin className="w-4 h-4 text-primary mt-0.5" /> Global HQ · International Trade Tower</div>
+          <div className="flex gap-3 text-sm"><Mail className="w-4 h-4 text-primary mt-0.5" /> sales@greentechimportexport.com</div>
         </div>
       </div>
       <div className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">

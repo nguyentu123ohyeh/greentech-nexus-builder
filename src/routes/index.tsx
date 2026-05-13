@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight, Cpu, Globe2, ShieldCheck, Truck, Network, Boxes, Sparkles,
   Factory, Award, Zap, Layers, ChevronDown, CircuitBoard, Server, MapPin, Plus, Star,
@@ -28,7 +28,6 @@ function Home() {
       <TechHighlights />
       <FeaturedProducts />
       <Industries />
-      <Testimonials />
       <Certifications />
       <Coverage />
       <FAQ />
@@ -37,97 +36,92 @@ function Home() {
   );
 }
 
-function Hero() {
-  return (
-    <section className="relative overflow-hidden -mt-24 pt-32 pb-32">
-      <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
-      <div className="absolute inset-0 grid-bg opacity-40" />
-      <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/20 blur-[120px] animate-float" />
-      <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] rounded-full bg-accent/15 blur-[140px] animate-float" style={{ animationDelay: "2s" }} />
+export default function Hero() {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs uppercase tracking-[0.25em] text-primary mb-8">
-            <Sparkles className="w-3.5 h-3.5" /> Global Technology Trade · Est. Worldwide
-          </div>
+  return (
+    <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden bg-[#0a0a0a] pt-32 pb-20">
+      {/* Background mờ ảo */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent blur-3xl" />
+      </div>
+
+      <div className="container relative z-10 px-4 flex flex-col items-center">
+        {/* Badge */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 px-4 py-1 border border-primary/30 rounded-full bg-primary/5 backdrop-blur-md"
+        >
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+            The Next Gen Supply Chain
+          </span>
         </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7">
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight"
-            >
-              Powering the world's <br />
-              <span className="text-gradient">technology supply chain</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}
-              className="mt-8 text-lg text-muted-foreground max-w-xl leading-relaxed"
-            >
-              GREENTECH IMPORT AND EXPORT COMPANY LIMITED connects manufacturers, distributors and enterprises
-              across continents — delivering premium computer components, industrial systems and AI hardware
-              with engineered reliability.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.7 }}
-              className="mt-10 flex flex-wrap gap-4"
-            >
-              <Link to="/products" className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold glow hover:opacity-90 transition">
-                Explore Products <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-              </Link>
-              <Link to="/about" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-strong font-semibold hover:bg-primary/10 transition">
-                About the Company
-              </Link>
-            </motion.div>
-
-            <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg">
-              {[["120+", "Countries"], ["18yrs", "Trade Experience"], ["10K+", "B2B Clients"]].map(([n, l], i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 + i * 0.1 }}>
-                  <div className="text-3xl font-bold text-gradient">{n}</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">{l}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.4 }}
-            className="lg:col-span-5 relative"
+        {/* PHẦN CHỮ - Đẩy lên trên cùng bằng z-index cao */}
+        <div className="relative z-20 text-center mb-[-20px]"> {/* Giảm margin-bottom âm xuống để không đè nhiều */}
+          <motion.h1 
+            style={{ y: y1 }}
+            className="text-[13vw] md:text-[11vw] font-black leading-[0.8] tracking-tighter uppercase italic select-none"
           >
-            <div className="relative rounded-3xl overflow-hidden glass-strong p-2 animate-pulse-glow">
-              <img
-                src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"
-                alt="Advanced electronics circuit board"
-                className="rounded-2xl w-full h-[520px] object-cover"
-              />
-              <div className="absolute inset-2 rounded-2xl bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 glass-strong rounded-xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"><CircuitBoard className="w-5 h-5 text-primary" /></div>
-                <div className="flex-1">
-                  <div className="text-xs text-muted-foreground">Live shipment</div>
-                  <div className="text-sm font-semibold">SHA → ROT · Container TX-2891</div>
-                </div>
-                <span className="px-2 py-1 rounded text-[10px] font-semibold bg-primary/20 text-primary">IN TRANSIT</span>
-              </div>
-            </div>
-            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity }} className="absolute -top-6 -left-6 glass-strong rounded-2xl p-4 flex items-center gap-3">
-              <Globe2 className="w-5 h-5 text-accent" />
-              <div className="text-xs"><div className="font-semibold">120+ Markets</div><div className="text-muted-foreground">Active routes</div></div>
-            </motion.div>
-            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity }} className="absolute -bottom-6 -right-6 glass-strong rounded-2xl p-4 flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-primary" />
-              <div className="text-xs"><div className="font-semibold">ISO 9001</div><div className="text-muted-foreground">Quality Verified</div></div>
-            </motion.div>
-          </motion.div>
+            <span className="block text-white">Powering</span>
+            <span className="block text-transparent stroke-text opacity-40">Global</span>
+            <span className="block bg-gradient-to-r from-primary via-emerald-400 to-primary bg-clip-text text-transparent">
+              Tech
+            </span>
+          </motion.h1>
         </div>
 
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="mt-20 flex justify-center text-muted-foreground">
-          <ChevronDown className="w-5 h-5" />
+        {/* PHẦN ẢNH & STATS - Dùng margin âm để kéo sát lên trên chữ */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative w-full max-w-5xl z-10 mx-auto" 
+        >
+          <div className="relative rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+            <img 
+              src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200" 
+              className="w-full h-[400px] object-cover grayscale brightness-90"
+              alt="Hardware"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          </div>
         </motion.div>
       </div>
+      
+        <div className="absolute right-4 md:right-10 top-[60%] -translate-y-1/2 flex flex-col gap-12 z-30">
+          {[
+            ['120+', 'Markets'], 
+            ['18Y', 'Experience'], 
+            ['10K+', 'B2B Clients']
+          ].map(([val, label], i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+              className="text-right flex flex-col items-end group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-4xl md:text-6xl font-black text-white group-hover:text-primary transition-all italic leading-none">
+                  {val}
+                </div>
+                {/* Vạch kẻ dọc sát biên phải */}
+                <div className="w-1.5 h-12 bg-primary rounded-full shadow-[0_0_10px_rgba(74,222,128,0.5)]" />
+              </div>
+              <div className="text-[10px] tracking-[0.3em] uppercase text-primary/70 font-bold mt-2 pr-4">
+                {label}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .stroke-text {
+          -webkit-text-stroke: 1.5px rgba(255,255,255,0.2);
+        }
+      `}} />
     </section>
   );
 }
@@ -568,36 +562,6 @@ function Industries() {
               <div className="p-6 rounded-2xl glass text-center hover:bg-primary/10 transition">
                 <div className="w-10 h-10 mx-auto rounded-lg bg-primary/15 flex items-center justify-center mb-3"><Factory className="w-5 h-5 text-primary" /></div>
                 <div className="text-sm font-medium">{n}</div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const t = [
-    { q: "Greentech's quality control is on another level — every container arrives exactly as inspected.", a: "Procurement Director", c: "European Distribution Group" },
-    { q: "Their engineering team helped us optimize the BOM for our edge computing rollout. True technology partner.", a: "VP Engineering", c: "IoT Solutions Provider" },
-    { q: "Fast quotes, transparent docs, on-time deliveries. They've become an extension of our supply chain.", a: "Supply Chain Lead", c: "Datacenter Operator" },
-  ];
-  return (
-    <section className="relative py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <Reveal className="mb-12 max-w-2xl">
-          <div className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Client Voices</div>
-          <h2 className="text-4xl lg:text-5xl font-bold">What partners say</h2>
-        </Reveal>
-        <div className="grid lg:grid-cols-3 gap-6">
-          {t.map((x, i) => (
-            <Reveal key={i} delay={i * 0.1}>
-              <div className="h-full p-7 rounded-3xl glass">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: 5 }).map((_, k) => <Star key={k} className="w-4 h-4 fill-accent text-accent" />)}</div>
-                <p className="text-base leading-relaxed mb-6">"{x.q}"</p>
-                <div className="text-sm font-semibold">{x.a}</div>
-                <div className="text-xs text-muted-foreground">{x.c}</div>
               </div>
             </Reveal>
           ))}
