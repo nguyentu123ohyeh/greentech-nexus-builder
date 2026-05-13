@@ -38,7 +38,7 @@ function About() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <Reveal>
             <div className="rounded-3xl overflow-hidden glass-strong p-2">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80" alt="Corporate office" className="w-full h-[500px] object-cover rounded-2xl" />
+              <img src="/assets/thumb/Modern tech company office environment with sleek design, computers, innovative workspace, professional technology atmosphere.jpg" alt="Corporate office" className="w-full h-[500px] object-cover rounded-2xl" />
             </div>
           </Reveal>
           <Reveal delay={0.1}>
@@ -108,8 +108,16 @@ function About() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal>
             <div className="rounded-3xl glass-strong p-10 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-              {[["120+", "Countries"], ["10K+", "Clients"], ["$280M", "Annual Volume"], ["18yrs", "Experience"]].map(([n, l], i) => (
-                <div key={i}><div className="text-4xl lg:text-5xl font-bold text-gradient">{n}</div><div className="text-xs uppercase tracking-widest text-muted-foreground mt-2">{l}</div></div>
+              {[
+                ["Global", "Import & Export"],
+                ["B2B", "Product Sourcing"],
+                ["OEM/ODM", "Supply Support"],
+                ["Multi-Category", "Hardware Trade"],
+              ].map(([n, l], i) => (
+                <div key={i}>
+                  <div className="text-3xl lg:text-4xl font-bold text-gradient">{n}</div>
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2">{l}</div>
+                </div>
               ))}
             </div>
           </Reveal>
@@ -133,22 +141,6 @@ function About() {
               From our manufacturing partnerships in Asia-Pacific to bonded warehouses across Europe and North America,
               our facilities are tuned for speed, traceability and inspection — ensuring every shipment moves with confidence.
             </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal className="text-center mb-10"><h2 className="text-3xl font-bold">Certifications & Memberships</h2></Reveal>
-          <Reveal>
-            <div className="rounded-3xl glass-strong p-10 grid grid-cols-3 md:grid-cols-6 gap-6 items-center">
-              {["ISO 9001", "CE", "FCC", "RoHS", "REACH", "AEO"].map((c, i) => (
-                <div key={i} className="text-center">
-                  <div className="w-14 h-14 mx-auto rounded-full bg-primary/15 flex items-center justify-center mb-2 ring-1 ring-primary/30"><Award className="w-6 h-6 text-primary" /></div>
-                  <div className="text-xs font-semibold tracking-wider">{c}</div>
-                </div>
-              ))}
-            </div>
           </Reveal>
         </div>
       </section>

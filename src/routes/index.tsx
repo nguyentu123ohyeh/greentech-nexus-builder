@@ -92,11 +92,11 @@ export default function Hero() {
       
         <div className="absolute right-4 md:right-10 top-[60%] -translate-y-1/2 flex flex-col gap-12 z-30">
           {[
-            ['120+', 'Markets'], 
-            ['18Y', 'Experience'], 
-            ['10K+', 'B2B Clients']
+            ["Global", "Trade Orientation"],
+            ["Technical", "Product Focus"],
+            ["B2B", "Supply Approach"],
           ].map(([val, label], i) => (
-            <motion.div 
+            <motion.div
               key={i}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -104,12 +104,13 @@ export default function Hero() {
               className="text-right flex flex-col items-end group"
             >
               <div className="flex items-center gap-3">
-                <div className="text-4xl md:text-6xl font-black text-white group-hover:text-primary transition-all italic leading-none">
+                <div className="text-3xl md:text-5xl font-black text-white group-hover:text-primary transition-all italic leading-none">
                   {val}
                 </div>
-                {/* Vạch kẻ dọc sát biên phải */}
+
                 <div className="w-1.5 h-12 bg-primary rounded-full shadow-[0_0_10px_rgba(74,222,128,0.5)]" />
               </div>
+
               <div className="text-[10px] tracking-[0.3em] uppercase text-primary/70 font-bold mt-2 pr-4">
                 {label}
               </div>
@@ -193,7 +194,7 @@ function TechShowcase() {
 function WhyChooseUs() {
   const reasons = [
     { icon: ShieldCheck, title: "Verified Quality", desc: "Multi-stage inspection at origin and pre-shipment, full traceability on every SKU." },
-    { icon: Globe2, title: "Global Reach", desc: "Active customer base across 120+ countries with localized fulfilment partners." },
+    { icon: Globe2, title: "Global Reach", desc: "Active customer base across many countries with localized fulfilment partners." },
     { icon: Truck, title: "Logistics Excellence", desc: "FCL, LCL, air & express options optimized by lane and Incoterm." },
     { icon: Award, title: "Certified Operations", desc: "ISO 9001 quality management plus product CE / FCC / RoHS compliance." },
     { icon: Zap, title: "Fast Quotations", desc: "Structured RFQ workflow returning detailed offers within 24 business hours." },
@@ -232,8 +233,8 @@ function Categories() {
   const cats = [
     { name: "Storage & Memory", img: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=900&q=80", count: "SSD · RAM · NAS" },
     { name: "Graphics & Compute", img: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=900&q=80", count: "GPU · CPU · AI" },
-    { name: "Industrial Systems", img: "https://images.unsplash.com/photo-1551703599-6b3e8379aa8d?auto=format&fit=crop&w=900&q=80", count: "Industrial PC · Edge" },
-    { name: "Networking", img: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=900&q=80", count: "Switch · 5G · Fiber" },
+    { name: "Industrial Systems", img: "/assets/thumb/2.jpg", count: "Industrial PC · Edge" },
+    { name: "Networking", img: "/assets/thumb/1.jpg", count: "Switch · 5G · Fiber" },
   ];
   return (
     <section className="relative py-24">
@@ -362,7 +363,13 @@ function Logistics() {
 }
 
 function Stats() {
-  const stats = [["120+", "Countries Served"], ["10K+", "Active B2B Clients"], ["$280M", "Annual Trade Volume"], ["18 yrs", "Industry Experience"]];
+  const stats = [
+    ["Procurement", "Product Inquiry Handling"],
+    ["Categories", "Electronics & Hardware Supply"],
+    ["Customization", "OEM / ODM Request Support"],
+    ["Documents", "Packing & Export Information"],
+  ];
+
   return (
     <section className="relative py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -370,8 +377,12 @@ function Stats() {
           <div className="rounded-3xl glass-strong p-10 lg:p-14 grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map(([n, l], i) => (
               <div key={i} className="text-center">
-                <div className="text-4xl lg:text-5xl font-bold text-gradient">{n}</div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2">{l}</div>
+                <div className="text-3xl lg:text-4xl font-bold text-gradient">
+                  {n}
+                </div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2">
+                  {l}
+                </div>
               </div>
             ))}
           </div>
@@ -383,32 +394,44 @@ function Stats() {
 
 function Timeline() {
   const events = [
-    ["2007", "Founded as a regional component trading firm"],
-    ["2012", "Expanded into European and North American markets"],
-    ["2016", "Launched dedicated industrial computing division"],
-    ["2020", "Achieved ISO 9001 certification & opened Rotterdam hub"],
-    ["2023", "Entered AI hardware and edge computing distribution"],
-    ["2026", "Operating in 120+ countries with 10K+ clients"],
+    ["Requirement Review", "Understand product type, target application, quantity range, and key technical requirements before recommending suitable options."],
+    ["Product Matching", "Compare available product categories, specifications, images, and usage scenarios to identify suitable models for B2B buyers."],
+    ["Supplier Coordination", "Coordinate product availability, packaging details, customization options, and commercial information for inquiry preparation."],
+    ["Quotation Preparation", "Organize product details, specification references, estimated packing data, and quotation-ready information for buyer review."],
+    ["Order Follow-up", "Support communication on product confirmation, sample discussion, order details, and delivery preparation."],
+    ["Export Support", "Assist with product information, packing references, invoice-related details, and shipment coordination when required."],
   ];
+
   return (
     <section className="relative py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="max-w-2xl mb-14">
-          <div className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Our Journey</div>
-          <h2 className="text-4xl lg:text-5xl font-bold">Eighteen years of building global trust</h2>
+          <div className="text-xs uppercase tracking-[0.3em] text-primary mb-4">
+            Working Process
+          </div>
+          <h2 className="text-4xl lg:text-5xl font-bold">
+            Structured support from product inquiry to export preparation
+          </h2>
         </Reveal>
+
         <div className="relative">
           <div className="absolute left-4 lg:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
+
           <div className="space-y-10">
-            {events.map(([year, text], i) => (
+            {events.map(([stage, text], i) => (
               <Reveal key={i} delay={i * 0.05}>
                 <div className={`relative flex flex-col lg:flex-row items-start gap-6 ${i % 2 ? "lg:flex-row-reverse" : ""}`}>
                   <div className="lg:w-1/2 lg:px-10">
                     <div className="glass rounded-2xl p-6">
-                      <div className="text-xs font-bold text-primary tracking-widest mb-2">{year}</div>
-                      <div className="text-base">{text}</div>
+                      <div className="text-xs font-bold text-primary tracking-widest mb-2 uppercase">
+                        {stage}
+                      </div>
+                      <div className="text-base text-muted-foreground">
+                        {text}
+                      </div>
                     </div>
                   </div>
+
                   <div className="absolute left-4 lg:left-1/2 top-6 -translate-x-1/2 w-3 h-3 rounded-full bg-primary glow" />
                   <div className="lg:w-1/2" />
                 </div>
@@ -529,10 +552,19 @@ function FeaturedProducts() {
           {featured.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.06}>
               <Link to="/products/$id" params={{ id: p.id }} className="group relative block rounded-2xl overflow-hidden glass hover:bg-primary/5 transition">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-primary/20 text-primary backdrop-blur">{p.category}</div>
+                <div className="aspect-[4/3] relative overflow-hidden bg-white">
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    loading="lazy"
+                    className="w-full h-full object-contain p-4 transition duration-700 group-hover:scale-105"
+                  />
+
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-primary/20 text-primary backdrop-blur">
+                    {p.category}
+                  </div>
                 </div>
                 <div className="p-5">
                   <div className="font-semibold mb-1 group-hover:text-primary transition">{p.name}</div>
