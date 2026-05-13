@@ -1,7 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Send, ZoomIn, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft,
+  Mail,
+  Send,
+  ZoomIn,
+  CheckCircle2,
+  Loader2,
+  CircuitBoard,
+} from "lucide-react";
 import Layout from "@/components/Layout";
 import { Reveal } from "@/components/Reveal";
 import { products } from "@/data/products";
@@ -9,80 +17,124 @@ import { products } from "@/data/products";
 export const Route = createFileRoute("/products/$id")({
   component: ProductDetail,
   loader: ({ params }) => {
-    const product = products.find((p) => p.id === params.id);
-    if (!product) throw notFound();
+    const product = products.find((p) => String(p.id) === params.id);
+
+    if (!product) {
+      throw notFound();
+    }
+
     return { product };
   },
-  notFoundComponent: () => (
-    <Layout>
-      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
-        <h1 className="text-4xl font-bold mb-3">Product not found</h1>
-        <Link to="/products" className="text-primary">← Back to products</Link>
-      </div>
-    </Layout>
-  ),
-  errorComponent: ({ error }) => (
-    <Layout>
-      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
-        <h1 className="text-3xl font-bold mb-3">Something went wrong</h1>
-        <p className="text-muted-foreground">{error.message}</p>
-      </div>
-    </Layout>
-  ),
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.product.name} — GREENTECH IMPORT AND EXPORT COMPANY LIMITED` },
-      { name: "description", content: loaderData?.product.tagline ?? "" },
-      { property: "og:image", content: loaderData?.product.image ?? "" },
+      {
+        title: `${loaderData?.product.name ?? "Product"} — GREENTECH IMPORT AND EXPORT`,
+      },
+      {
+        name: "description",
+        content: loaderData?.product.tagline ?? "",
+      },
     ],
   }),
 });
 
 function ProductDetail() {
-  const { product } = Route.useLoaderData() as { product: typeof products[number] };
+  const { product } = Route.useLoaderData();
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
-  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3);
-  const fallback = products.filter((p) => p.id !== product.id).slice(0, 3);
-  const finalRelated = related.length ? related : fallback;
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    setActive(0);
+    setZoom(false);
+  }, [product.id]);
+
+  const gallery =
+    product.gallery && product.gallery.length > 0
+      ? product.gallery
+      : [product.image];
+
+  const related = products
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 3);
+
+  const finalRelated = related.length
+    ? related
+    : products.filter((p) => p.id !== product.id).slice(0, 3);
+
+  if (!isClient) {
+    return (
+      <Layout>
+        <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <section className="relative py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Link to="/products" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8">
-            <ArrowLeft className="w-4 h-4" /> Back to all products
+          <Link
+            to="/products"
+            className="group mb-8 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30 transition-all hover:text-primary"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Back to Hardware Sector
           </Link>
 
-          <div className="grid lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-7">
+          <div className="grid items-start gap-12 lg:grid-cols-12">
+            <div className="space-y-4 lg:col-span-7">
               <Reveal>
                 <div
-                  className="relative rounded-3xl overflow-hidden glass-strong p-2 group cursor-zoom-in"
-                  onClick={() => setZoom(!zoom)}
+                  className="glass-strong group relative cursor-zoom-in overflow-hidden rounded-[2rem] border border-white/5 bg-black/40 p-2 shadow-2xl"
+                  onClick={() => setZoom((v) => !v)}
                 >
-                  <motion.img
-                    key={active}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: zoom ? 1.4 : 1 }}
-                    transition={{ duration: 0.4 }}
-                    src={product.gallery[active]}
-                    alt={product.name}
-                    className="w-full aspect-[4/3] object-cover rounded-2xl"
-                  />
-                  <div className="absolute top-5 right-5 w-10 h-10 rounded-full glass-strong flex items-center justify-center">
-                    <ZoomIn className="w-4 h-4" />
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={`${product.id}-${active}`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{
+                        opacity: 1,
+                        scale: zoom ? 1.15 : 1,
+                        transition: { duration: 0.4, ease: "circOut" },
+                      }}
+                      exit={{ opacity: 0 }}
+                      src={gallery[active] || product.image}
+                      alt={product.name}
+                      className="aspect-[4/3] w-full rounded-[1.5rem] bg-white object-contain p-6"
+                    />
+                  </AnimatePresence>
+
+                  <div className="glass-strong absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 opacity-0 shadow-2xl transition-opacity group-hover:opacity-100">
+                    <ZoomIn className="h-5 w-5 text-primary" />
                   </div>
                 </div>
               </Reveal>
-              <div className="mt-4 grid grid-cols-4 gap-3">
-                {product.gallery.map((g, i) => (
+
+              <div className="grid grid-cols-4 gap-4">
+                {gallery.map((g, i) => (
                   <button
-                    key={i}
-                    onClick={() => setActive(i)}
-                    className={`relative rounded-xl overflow-hidden ring-2 transition ${active === i ? "ring-primary glow" : "ring-transparent opacity-70 hover:opacity-100"}`}
+                    suppressHydrationWarning
+                    key={`${g}-${i}`}
+                    type="button"
+                    onClick={() => {
+                      setActive(i);
+                      setZoom(false);
+                    }}
+                    className={`relative aspect-square overflow-hidden rounded-2xl border-2 border-transparent ring-2 transition-all duration-300 ${
+                      active === i
+                        ? "scale-95 ring-primary shadow-[0_0_20px_rgba(74,222,128,0.3)]"
+                        : "opacity-40 ring-transparent hover:scale-105 hover:opacity-100"
+                    }`}
                   >
-                    <img src={g} alt="" className="w-full aspect-square object-cover" />
+                    <img src={g} alt="" className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -90,34 +142,72 @@ function ProductDetail() {
 
             <div className="lg:col-span-5">
               <Reveal delay={0.1}>
-                <div className="text-xs uppercase tracking-[0.3em] text-primary mb-3">{product.category}</div>
-                <h1 className="text-4xl font-bold leading-tight mb-4">{product.name}</h1>
-                <p className="text-muted-foreground leading-relaxed mb-6">{product.tagline}</p>
+                <div className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                  <div className="h-px w-8 bg-primary/30" />
+                  Industrial Specification _
+                </div>
 
-                <div className="flex flex-wrap gap-2 mb-8">
+                <h1 className="mb-4 text-4xl font-black uppercase italic leading-none tracking-tighter text-white md:text-5xl">
+                  {product.name}
+                </h1>
+
+                <p className="mb-8 border-l-4 border-primary/20 pl-6 text-lg italic leading-relaxed text-white/50">
+                  {product.tagline}
+                </p>
+
+                <div className="mb-10 flex flex-wrap gap-2">
                   {product.tags.map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full text-xs font-medium bg-primary/15 text-primary">{t}</span>
+                    <span
+                      key={t}
+                      className="rounded-md border border-white/10 bg-white/5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white/40"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
 
-                <div className="glass rounded-2xl p-5 mb-6">
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Technical Specifications</div>
-                  <dl className="grid grid-cols-1 gap-2.5 text-sm">
+                <div className="glass-strong relative mb-8 overflow-hidden rounded-[2rem] border border-white/5 bg-black/20 p-8">
+                  <div className="absolute right-0 top-0 rotate-12 p-4 opacity-5">
+                    <CircuitBoard className="h-24 w-24 text-primary" />
+                  </div>
+
+                  <div className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                    Hardware Matrix
+                  </div>
+
+                  <dl className="relative z-10 space-y-4">
                     {product.specs.map((s) => (
-                      <div key={s.label} className="flex justify-between gap-4 py-1.5 border-b border-border/40 last:border-0">
-                        <dt className="text-muted-foreground">{s.label}</dt>
-                        <dd className="font-medium text-right">{s.value}</dd>
+                      <div
+                        key={s.label}
+                        className="flex items-center justify-between border-b border-white/5 py-2 last:border-0"
+                      >
+                        <dt className="text-[10px] font-bold uppercase tracking-widest text-white/20">
+                          {s.label}
+                        </dt>
+                        <dd className="text-sm font-black italic text-white">
+                          {s.value}
+                        </dd>
                       </div>
                     ))}
                   </dl>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold glow">
-                    <Mail className="w-4 h-4" /> CONTACT US
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <Link
+                    to="/contact"
+                    className="inline-flex flex-1 items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-5 font-black uppercase tracking-widest text-black shadow-[0_15px_30px_-10px_rgba(74,222,128,0.4)] transition-all hover:scale-[1.03] active:scale-95"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Order Dispatch
                   </Link>
-                  <a href="#inquiry" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl glass-strong font-semibold hover:bg-primary/10 transition">
-                    <Send className="w-4 h-4" /> Send Inquiry
+
+                  <a
+                    href="#inquiry"
+                    className="inline-flex items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-8 py-5 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-xl transition-all hover:bg-white/10"
+                  >
+                    <Send className="h-4 w-4 text-primary" />
+                    Request RFQ
                   </a>
                 </div>
               </Reveal>
@@ -126,31 +216,35 @@ function ProductDetail() {
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-2 gap-10">
+      <section className="relative overflow-hidden border-t border-white/5 bg-white/[0.01] py-24">
+        <div className="grid-bg absolute inset-0 opacity-20" />
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-20 px-4 sm:px-6 lg:grid-cols-2">
           <Reveal>
-            <h2 className="text-2xl font-bold mb-4">Product Overview</h2>
-            <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+            <h2 className="mb-8 flex items-center gap-4 text-3xl font-black uppercase italic tracking-tighter text-white">
+              <span className="text-primary">//</span>
+              Technical Overview
+            </h2>
+            <p className="text-xl font-light leading-relaxed text-white/50">
+              {product.description}
+            </p>
           </Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="text-2xl font-bold mb-4">Key Features</h2>
-            <ul className="space-y-3">
+
+          <Reveal delay={0.2}>
+            <h2 className="mb-8 flex items-center gap-4 text-3xl font-black uppercase italic tracking-tighter text-white">
+              <span className="text-primary">//</span>
+              Key Capabilities
+            </h2>
+
+            <div className="grid gap-4">
               {product.features.map((f, i) => (
-                <li key={i} className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" /><span className="text-sm text-muted-foreground">{f}</span></li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal>
-            <h2 className="text-2xl font-bold mb-8">Application Scenarios</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {product.applications.map((a, i) => (
-                <div key={i} className="p-5 rounded-2xl glass">
-                  <div className="text-sm font-medium">{a}</div>
+                <div
+                  key={i}
+                  className="group flex gap-5 rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-all hover:border-primary/20 hover:bg-white/[0.05]"
+                >
+                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-primary" />
+                  <span className="text-sm font-medium leading-relaxed text-white/70">
+                    {f}
+                  </span>
                 </div>
               ))}
             </div>
@@ -158,35 +252,70 @@ function ProductDetail() {
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <Reveal>
-            <h2 className="text-2xl font-bold mb-8">Product Gallery</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {product.gallery.map((g, i) => (
-                <div key={i} className="rounded-2xl overflow-hidden glass aspect-square">
-                  <img src={g} alt="" className="w-full h-full object-cover hover:scale-110 transition duration-700" />
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="inquiry" className="py-16">
+      <section id="inquiry" className="py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <Reveal>
-            <div className="rounded-3xl glass-strong p-8 lg:p-10">
-              <h2 className="text-2xl font-bold mb-2">Product Inquiry</h2>
-              <p className="text-sm text-muted-foreground mb-6">Send us your requirements and we'll respond within 24 business hours.</p>
-              <form onSubmit={(e) => { e.preventDefault(); alert("Inquiry sent — our team will reply within 24 business hours."); }} className="grid sm:grid-cols-2 gap-4">
-                <input required placeholder="Full Name" className="px-4 py-3 bg-input rounded-xl text-sm outline-none focus:ring-2 ring-primary/40" />
-                <input required type="email" placeholder="Email" className="px-4 py-3 bg-input rounded-xl text-sm outline-none focus:ring-2 ring-primary/40" />
-                <input placeholder="Company" className="px-4 py-3 bg-input rounded-xl text-sm outline-none focus:ring-2 ring-primary/40" />
-                <input placeholder="Country" className="px-4 py-3 bg-input rounded-xl text-sm outline-none focus:ring-2 ring-primary/40" />
-                <textarea required placeholder={`Tell us about quantity & requirements for ${product.name}`} rows={5} className="sm:col-span-2 px-4 py-3 bg-input rounded-xl text-sm outline-none focus:ring-2 ring-primary/40 resize-none" />
-                <button className="sm:col-span-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold glow">
-                  <Send className="w-4 h-4" /> Submit Inquiry
+            <div className="glass-strong rounded-[3rem] border border-white/5 bg-black/20 p-10 shadow-3xl lg:p-14">
+              <h2 className="mb-2 text-center text-4xl font-black uppercase italic tracking-tighter text-white">
+                Dispatch Inquiry
+              </h2>
+
+              <p className="mb-10 text-center text-sm uppercase tracking-[0.2em] text-white/30">
+                Procurement Desk Replies within 24 business hours
+              </p>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Inquiry logged. Sector response incoming.");
+                }}
+                className="grid gap-6 sm:grid-cols-2"
+              >
+                <div className="space-y-2">
+                  <label className="ml-2 text-[9px] uppercase tracking-widest text-white/30">
+                    Full Name
+                  </label>
+                  <input
+                    suppressHydrationWarning
+                    required
+                    placeholder="AGENT NAME"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-6 py-4 font-mono text-sm text-white outline-none focus:ring-1 ring-primary/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="ml-2 text-[9px] uppercase tracking-widest text-white/30">
+                    Email Endpoint
+                  </label>
+                  <input
+                    suppressHydrationWarning
+                    required
+                    type="email"
+                    placeholder="CONTACT@HQ.COM"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-6 py-4 font-mono text-sm text-white outline-none focus:ring-1 ring-primary/50"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <label className="ml-2 text-[9px] uppercase tracking-widest text-white/30">
+                    Mission Requirements
+                  </label>
+                  <textarea
+                    suppressHydrationWarning
+                    required
+                    placeholder={`LOG QUANTITY & TECHNICAL SPECS FOR ${product.name.toUpperCase()}`}
+                    rows={5}
+                    className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-6 py-4 font-mono text-sm text-white outline-none focus:ring-1 ring-primary/50"
+                  />
+                </div>
+
+                <button
+                  suppressHydrationWarning
+                  type="submit"
+                  className="mt-4 inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-emerald-500 px-8 py-5 font-black uppercase tracking-widest text-black shadow-xl transition-all hover:opacity-90 active:scale-95 sm:col-span-2"
+                >
+                  <Send className="h-5 w-5" />
+                  TRANSMIT INQUIRY
                 </button>
               </form>
             </div>
@@ -194,19 +323,45 @@ function ProductDetail() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="border-t border-white/5 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal>
-            <h2 className="text-2xl font-bold mb-8">Related Products</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mb-12 flex items-end justify-between">
+              <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">
+                Related Sector Hardware
+              </h2>
+              <Link
+                to="/products"
+                className="text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:text-white"
+              >
+                View All Catalogue
+              </Link>
+            </div>
+
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {finalRelated.map((p) => (
-                <Link key={p.id} to="/products/$id" params={{ id: p.id }} className="group relative block rounded-2xl overflow-hidden glass hover:bg-primary/5 transition">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                <Link
+                  key={p.id}
+                  to="/products/$id"
+                  params={{ id: String(p.id) }}
+                  className="glass group block overflow-hidden rounded-[2rem] border border-white/5 shadow-xl transition-all duration-500 hover:border-primary/30"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-110 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60" />
                   </div>
-                  <div className="p-5">
-                    <div className="text-[10px] uppercase tracking-wider text-primary mb-1">{p.category}</div>
-                    <div className="font-semibold group-hover:text-primary transition">{p.name}</div>
+
+                  <div className="p-6">
+                    <div className="mb-2 text-[9px] font-black uppercase tracking-widest text-primary">
+                      {p.category}
+                    </div>
+                    <div className="text-xl font-black uppercase italic tracking-tighter text-white transition-colors group-hover:text-primary">
+                      {p.name}
+                    </div>
                   </div>
                 </Link>
               ))}
